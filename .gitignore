@@ -1,5 +1,11 @@
+# Environment files (Root, Frontends, and Backend)
 .env
+.env.*
+*.env
+*.env.*
 **/.env
+**/.env.*
+!**/.env.example
 **/target/
 **/node_modules/
 **/dist/
