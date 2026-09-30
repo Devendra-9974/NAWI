@@ -1,0 +1,88 @@
+# Render Blueprint Specification for METROLOGIX
+# https://render.com/docs/blueprint-spec
+
+services:
+  # =======================================================
+  # 1. METROLOGIX BACKEND (Spring Boot 3.3.3 / Java 21)
+  # =======================================================
+  - type: web
+    name: metrologix-backend
+    runtime: docker
+    rootDir: server
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    autoDeploy: true
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+      - key: APP_STORAGE_UPLOAD_DIR
+        value: ./uploads
+      - key: APP_STORAGE_REPORTS_DIR
+        value: ./uploads/reports
+      - key: APP_STORAGE_ATTACHMENTS_DIR
+        value: ./uploads/attachments
+
+  # =======================================================
+  # 2. CLIENT 1 — Baseline Functional UI (Port 5173 local)
+  # =======================================================
+  - type: web
+    name: metrologix-client1
+    runtime: static
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    plan: free
+    region: oregon
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://metrologix-backend.onrender.com/api
+
+  # =======================================================
+  # 3. CLIENT 2 — Figma Studio UI (Port 5174 local)
+  # =======================================================
+  - type: web
+    name: metrologix-client2
+    runtime: static
+    rootDir: client2
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    plan: free
+    region: oregon
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://metrologix-backend.onrender.com/api
+
+  # =======================================================
+  # 4. CLIENT 3 — Stitch Telemetry UI (Port 5175 local)
+  # =======================================================
+  - type: web
+    name: metrologix-client3
+    runtime: static
+    rootDir: client3
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    plan: free
+    region: oregon
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://metrologix-backend.onrender.com/api

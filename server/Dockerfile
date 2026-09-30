@@ -10,6 +10,7 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/legalmetrix-backend-1.0.0.jar app.jar
-RUN mkdir -p /app/uploads/reports /app/uploads/attachments
+RUN mkdir -p /app/uploads/reports /app/uploads/attachments /app/data
+ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
