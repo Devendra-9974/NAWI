@@ -1,7 +1,5 @@
 .env
 **/.env
-**/application.yml
-**/application.mysql.yml
 **/target/
 **/node_modules/
 **/dist/
