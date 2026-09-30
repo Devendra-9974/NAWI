@@ -1,6 +1,27 @@
 import axios from 'axios';
 
-export const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api';
+function resolveApiBaseUrl(): string {
+  const envUrl = (import.meta as any).env?.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '' && envUrl !== '/api') {
+    return envUrl.replace(/\/+$/, '');
+  }
+
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('VITE_API_URL') || localStorage.getItem('API_BASE_URL');
+    if (saved && saved.trim() !== '') {
+      return saved.replace(/\/+$/, '');
+    }
+
+    // If deployed on Render static frontend, automatically point to backend service
+    if (window.location.hostname.endsWith('.onrender.com')) {
+      return 'https://metrologix-backend.onrender.com/api';
+    }
+  }
+
+  return '/api';
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
